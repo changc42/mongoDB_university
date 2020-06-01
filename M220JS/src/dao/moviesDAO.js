@@ -199,6 +199,9 @@ export default class MoviesDAO {
       sortStage,
       // TODO Ticket: Faceted Search
       // Add the stages to queryPipeline in the correct order.
+      skipStage,
+      limitStage,
+      facetStage,
     ]
 
     try {
@@ -265,7 +268,9 @@ export default class MoviesDAO {
     const displayCursor = cursor.limit(moviesPerPage)
 
     try {
-      const moviesList = await displayCursor.toArray()
+      const moviesList = await displayCursor
+        .skip(moviesPerPage * page)
+        .toArray()
       const totalNumMovies = page === 0 ? await movies.countDocuments(query) : 0
 
       return { moviesList, totalNumMovies }
